@@ -23,9 +23,7 @@ $db->checkIfTableExists(Geoname::TABLE_NAME);
 
 
 $data_array = ImportService::getDataArrayFromCsvFile($_FILES['geonames']['tmp_name'], 4, ';');
-if (!$data_array) {
-    header($_SERVER['SERVER_PROTOCOL'] . ' 409 Conflict');
-    echo json_encode(['message' => 'Getting data from the file failed.']);
+if (ImportService::checkIfDataArrayExists($data_array)) {
     return;
 }
 Geoname::storeMany($connection, $data_array);

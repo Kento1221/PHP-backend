@@ -7,13 +7,11 @@ use PDO;
 
 class Customer
 {
-    //todo: change to private
-    public $data = [];
     private int $id;
-    public $all_calls = 0;
-    public $all_continental_calls = 0;
-    public $sum_duration = 0;
-    public $sum_continental_duration = 0;
+    private $all_calls = 0;
+    private $all_continental_calls = 0;
+    private $sum_duration = 0;
+    private $sum_continental_duration = 0;
 
     public function __construct($id)
     {
@@ -42,11 +40,30 @@ class Customer
     }
 
     /**
+     * Calculate customer's (intercontinental and continental) number of calls and sum of call durations.
+     * @param $connection
+     * @param $customer_call_details_array
+     */
+    public function calculateCustomerCallDetails($connection, $customer_call_details_array): void
+    {
+        CustomerService::markContinentalCalls($connection, $customer_call_details_array);
+
+        $this->all_calls = count($customer_call_details_array);
+        foreach ($customer_call_details_array as $record) {
+            if ($record->is_continental) {
+                $this->all_continental_calls++;
+                $this->sum_continental_duration += $record->call_duration;
+            }
+            $this->sum_duration += $record->call_duration;
+        }
+    }
+
+    /**
      * Get array of customer's call details.
      * @return array
-     * <p>array(<br>customer_ip, <br>all_calls, <br>all_continental_calls, <br>sum_duration, <br>sum_continental_duration<br>)</p>
+     * <p>array(<br>customer_id, <br>all_calls, <br>all_continental_calls, <br>sum_duration, <br>sum_continental_duration<br>)</p>
      */
-    public function getDetailsArray()
+    public function getDetailsArray(): array
     {
         return array(
             'customer_id' => $this->id,

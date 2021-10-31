@@ -8,26 +8,13 @@ class Geoname
 {
     public const TABLE_NAME = 'geonames';
 
-    public $geonameId;
-    public $countryIso;
-    public $continent;
-    public $phoneCode;
-
-    public function __construct($geonameId, $countryIso, $continent, $phoneCode)
-    {
-        $this->geonameId = $geonameId;
-        $this->countryIso = $countryIso;
-        $this->continent = $continent;
-        $this->phoneCode = $phoneCode;
-    }
-
     /** Imports data from array into the database
      * @param PDO $connection
      * @param array $data
      * Format of array(geoname_id, country, continent, phone_code)
      * @return bool
      */
-    public static function storeMany($connection, $data)
+    public static function storeMany($connection, $data): bool
     {
         $query = "INSERT INTO "
             . self::TABLE_NAME .
@@ -36,7 +23,7 @@ class Geoname
         $data_string = '';
 
         foreach ($data['data'] as $row) {
-            $row[3] = preg_replace("/[^0-9]/", "", $row[3] );
+            $row[3] = preg_replace("/[^0-9]/", "", $row[3]);
             $data_string .= "({$row[0]}, '{$row[1]}', '{$row[2]}', '{$row[3]}'),";
         }
         $data_string = substr($data_string, 0, -1);
@@ -56,7 +43,7 @@ class Geoname
      * @param string $continent
      * @return array
      */
-    public static function getPhoneCodesByCotinent($connection, $continent)
+    public static function getPhoneCodesByCotinent($connection, $continent): array
     {
         $query = "SELECT phone_code FROM "
             . self::TABLE_NAME .

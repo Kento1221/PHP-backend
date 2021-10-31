@@ -9,6 +9,11 @@ use PDO;
 
 class RecordService
 {
+    /**
+     * Validate store method POST request fields. Return false and echo error if not successful.
+     * @param $post_array
+     * @return bool
+     */
     public static function validateStoreInput($post_array): bool
     {
         $missingVariables = [];
@@ -27,6 +32,7 @@ class RecordService
     }
 
     /**
+     * Check whether the id provided is correct and exists in `records` table.
      * @param array $post_array
      * @return bool
      */

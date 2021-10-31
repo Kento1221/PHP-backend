@@ -8,11 +8,12 @@ class Record
 {
     public const TABLE_NAME = 'records';
 
-    public $customerId;
-    public $callDate;
-    public $callDuration;
-    public $numberCalled;
-    public $customerIp;
+    private $id = -1;
+    private $customerId;
+    private $callDate;
+    private $callDuration;
+    private $numberCalled;
+    private $customerIp;
 
     public function __construct(
         $customerId,
@@ -42,11 +43,11 @@ class Record
         return $result->fetchAll(PDO::FETCH_CLASS);
     }
 
-    /** Creates a new record in the database
+    /** Creates a new record in the `records` table
      * @param PDO $connection
      * @return bool
      */
-    public function store($connection)
+    public function store($connection): bool
     {
         $query = 'INSERT INTO '
             . $this::TABLE_NAME . ' (
@@ -71,17 +72,19 @@ class Record
         $result->bindParam(':call_duration', $this->callDuration);
         $result->bindParam(':number_called', $this->numberCalled);
         $result->bindParam(':customer_ip', $this->customerIp);
+        $result = $result->execute();
+        $this->id = $connection->lastInsertId();
 
-        return $result->execute();
+        return $result;
     }
 
-    /** Creates a new record in the database
+    /** Inserts many records to `records` table.
      * @param PDO $connection
      * @param array $data
      * Format of array(customer_id, call_date, call_duration, number_called, customer_ip)
      * @return bool
      */
-    public static function storeMany($connection, $data)
+    public static function storeMany($connection, $data): bool
     {
         $query = "INSERT INTO "
             . self::TABLE_NAME .
@@ -103,12 +106,12 @@ class Record
         return $result->execute();
     }
 
-    /** Returns a record by provided id
+    /** Returns a record of provided id.
      * @param PDO $connection
      * @param int $id
      * @return array
      */
-    public static function show($connection, $id)
+    public static function show($connection, $id): array
     {
         $query = "SELECT * FROM " . self::TABLE_NAME . " WHERE id = :id;";
         $result = $connection->prepare($query);
@@ -123,12 +126,28 @@ class Record
      * @param int $id
      * @return bool
      */
-    public static function destroy($connection, $id)
+    public static function destroy($connection, $id): bool
     {
         $query = "DELETE FROM " . self::TABLE_NAME . " WHERE id = :id;";
         $result = $connection->prepare($query);
         $result->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $result->execute();
+    }
+
+    /**
+     * Returns an array with Record fields. If the record has not been added to the database the id field equals -1.
+     * @return array
+     */
+    public function getRecordDataArray()
+    {
+        return [
+            'id' => $this->id,
+            'customer_id' => $this->customerId,
+            'call_date' => $this->callDate,
+            'call_duration' => $this->callDuration,
+            'number_called' => $this->numberCalled,
+            'customer_ip' => $this->customerIp
+        ];
     }
 }

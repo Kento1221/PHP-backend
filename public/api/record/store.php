@@ -33,17 +33,11 @@ $record = new Record(
 $result = $record->store($connection);
 
 if ($result) {
-    echo json_encode([
-        'id' => $connection->lastInsertId(),
-        'customer_id' => $record->customerId,
-        'call_date' => $record->callDate,
-        'call_duration' => $record->callDuration,
-        'number_called' => $record->numberCalled,
-        'customer_ip' => $record->customerIp
-    ]);
+    echo json_encode($record->getRecordDataArray());
 }
 else {
-    header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
+    header($_SERVER["SERVER_PROTOCOL"] . " 409 Conflict");
+    echo json_encode(['message' => 'Could not store the record.']);
 }
 $db->close();
 

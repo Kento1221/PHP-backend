@@ -21,12 +21,8 @@ $db = new SQLiteDatabaseConnection();
 $connection = $db->connect();
 $db->checkIfTableExists(Record::TABLE_NAME);
 
-
-
 $data_array = ImportService::getDataArrayFromCsvFile($_FILES['records']['tmp_name'], 5);
-if (!$data_array) {
-    header($_SERVER['SERVER_PROTOCOL'] . ' 409 Conflict');
-    echo json_encode(['message' => 'Getting data from the file failed.']);
+if (ImportService::checkIfDataArrayExists($data_array)) {
     return;
 }
 Record::storeMany($connection, $data_array);

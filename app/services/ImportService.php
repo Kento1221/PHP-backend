@@ -4,11 +4,17 @@ namespace App\Services;
 
 class ImportService
 {
-    public static function validateFileInput($post_array, $filename)
+    /**
+     * Check if file has been sent in the POST request.
+     * @param $post_array
+     * @param $filename
+     * @return bool
+     */
+    public static function validateFileInput($post_array, $filename): bool
     {
         if (!isset($post_array[$filename])) {
             header($_SERVER["SERVER_PROTOCOL"] . ' 422 Unprocessable Entity');
-            echo json_encode(['message' => 'No `'.$filename.'` file type field found.']);
+            echo json_encode(['message' => 'No `' . $filename . '` file type field found.']);
             return false;
         }
         return true;
@@ -38,5 +44,20 @@ class ImportService
             return ['number_of_rows' => $row, 'data' => $data_array];
         }
         return false;
+    }
+
+    /**
+     * Check whether the data array has been correctly created. If not return false.
+     * @param $data_array
+     * @return bool
+     */
+    public static function checkIfDataArrayExists($data_array): bool
+    {
+        if (!$data_array) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 409 Conflict');
+            echo json_encode(['message' => 'Getting data from the file failed.']);
+            return false;
+        }
+        return true;
     }
 }

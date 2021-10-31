@@ -13,6 +13,7 @@ class CustomerService
 
     //todo: could be generalized for many models
     /**
+     * Validate id field from POST request.
      * @param array $post_array
      * @return bool
      */
@@ -72,5 +73,33 @@ class CustomerService
         }
 
         return $result['continent_code'];
+    }
+
+    /**
+     * Mark call records whether they are continental or not with boolean value assigned to is_continental object property.
+     * @param PDO $connection
+     * @param array $customer_call_details_array
+     */
+    public static function markContinentalCalls($connection, &$customer_call_details_array): void
+    {
+        // "info": "The Bulk Lookup Endpoint is not supported on the current subscription plan"
+        // so I had to do it separately inside a loop :(
+        for ($i = 0; $i < count($customer_call_details_array); $i++) {
+            $row = $customer_call_details_array[$i];
+            $continent = CustomerService::getContinentFromIp($row->customer_ip);
+            if (is_bool($continent)) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 409 Conflict');
+                echo json_encode(['message' => 'Something went wrong. Could not get continent_code from IPStack API.']);
+            }
+
+            $phone_codes = Geoname::getPhoneCodesByCotinent($connection, $continent);
+            $row->is_continental = false;
+            foreach ($phone_codes as $code) {
+                if ($code != "" && substr($row->number_called, 0, strlen($code)) === $code) {
+                    $row->is_continental = true;
+                    break;
+                }
+            }
+        }
     }
 }

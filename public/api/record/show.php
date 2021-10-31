@@ -20,6 +20,7 @@ if (!RecordService::validateRecordIdInput($_GET)) {
 }
 $db = new SQLiteDatabaseConnection();
 $connection = $db->connect();
+$db->checkIfTableExists(Record::TABLE_NAME);
 $record = Record::show($connection, $_GET['id']);
 echo json_encode($record);
 $db->close();

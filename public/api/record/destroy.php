@@ -19,7 +19,9 @@ if(!RecordService::validateRecordIdInput($_GET)){
 }
 
 $db = new SQLiteDatabaseConnection();
-$deleted = Record::destroy($db->connect(), $_GET['id']);
+$connection = $db->connect();
+$db->checkIfTableExists(Record::TABLE_NAME);
+$deleted = Record::destroy($connection, $_GET['id']);
 
 if($deleted){
     echo json_encode(['message' => 'Record deleted successfully!']);
