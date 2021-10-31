@@ -1,0 +1,19 @@
+{
+  "name": "kento1221/php-backend",
+  "description": "Clean php based backend for phone record handling",
+  "authors": [
+    {
+      "name": "Kamil Orkisz",
+      "email": "kamilorkisz@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "require": {
+    "ext-pdo": "*",
+    "ext-json": "*"
+  }
+}
