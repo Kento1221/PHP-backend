@@ -22,7 +22,7 @@ $connection = $db->connect();
 $db->checkIfTableExists(Record::TABLE_NAME);
 
 $data_array = ImportService::getDataArrayFromCsvFile($_FILES['records']['tmp_name'], 5);
-if (ImportService::checkIfDataArrayExists($data_array)) {
+if (!ImportService::checkIfDataArrayExists($data_array)) {
     return;
 }
 Record::storeMany($connection, $data_array);

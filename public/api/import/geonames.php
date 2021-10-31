@@ -23,7 +23,7 @@ $db->checkIfTableExists(Geoname::TABLE_NAME);
 
 
 $data_array = ImportService::getDataArrayFromCsvFile($_FILES['geonames']['tmp_name'], 4, ';');
-if (ImportService::checkIfDataArrayExists($data_array)) {
+if (!ImportService::checkIfDataArrayExists($data_array)) {
     return;
 }
 Geoname::storeMany($connection, $data_array);

@@ -53,7 +53,7 @@ class ImportService
      */
     public static function checkIfDataArrayExists($data_array): bool
     {
-        if (!$data_array) {
+        if (is_bool($data_array)) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 409 Conflict');
             echo json_encode(['message' => 'Getting data from the file failed.']);
             return false;
