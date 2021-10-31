@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Interfaces\Database;
 use PDO;
 
 class Record
 {
-    private const TABLE_NAME = 'records';
+    public const TABLE_NAME = 'records';
 
     public $customerId;
     public $callDate;
@@ -33,7 +32,7 @@ class Record
      * @param PDO $connection
      * @return array
      */
-    public static function index($connection)
+    public static function getAll($connection)
     {
         //Should be paginated if the database grows larger
         $query = "SELECT * FROM " . self::TABLE_NAME . ";";
@@ -77,11 +76,12 @@ class Record
     }
 
     /** Creates a new record in the database
-     * @param Database $database
+     * @param PDO $connection
      * @param array $data
-     * @return array
+     * Format of array(customer_id, call_date, call_duration, number_called, customer_ip)
+     * @return bool
      */
-    public static function storeMany($database, $data)
+    public static function storeMany($connection, $data)
     {
         $query = "INSERT INTO "
             . self::TABLE_NAME .
@@ -95,10 +95,9 @@ class Record
         $data_string = substr($data_string, 0, -1);
         $data_string .= ';';
         $query .= $data_string;
-        $conn = $database->connect();
-        $result = $conn->prepare($query);
+        $result = $connection->prepare($query);
         if (!$result) {
-            echo json_encode($conn->errorInfo());
+            echo json_encode($connection->errorInfo());
             return false;
         }
         return $result->execute();
@@ -109,8 +108,7 @@ class Record
      * @param int $id
      * @return array
      */
-    public
-    static function show($connection, $id)
+    public static function show($connection, $id)
     {
         $query = "SELECT * FROM " . self::TABLE_NAME . " WHERE id = :id;";
         $result = $connection->prepare($query);
@@ -118,5 +116,19 @@ class Record
         $result->execute();
 
         return $result->fetchAll(PDO::FETCH_CLASS);
+    }
+
+    /** Returns a record by provided id
+     * @param PDO $connection
+     * @param int $id
+     * @return bool
+     */
+    public static function destroy($connection, $id)
+    {
+        $query = "DELETE FROM " . self::TABLE_NAME . " WHERE id = :id;";
+        $result = $connection->prepare($query);
+        $result->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $result->execute();
     }
 }

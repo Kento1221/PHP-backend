@@ -12,5 +12,5 @@ include_once '../../../app/models/Record.php';
 include_once '../../../config.php';
 
 $db = new SQLiteDatabaseConnection();
-echo json_encode(Record::index($db->connect()));
+echo json_encode(Record::getAll($db->connect()));
 $db->close();

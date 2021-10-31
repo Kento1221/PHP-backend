@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Config;
+use Exception;
 use PDO;
 use PDOException;
 
@@ -36,9 +37,8 @@ class SQLiteDatabaseConnection
 
     /**
      * Create a new table for records.
-     * @param PDO $conn
      */
-    public static function createRecordsTable($conn)
+    public function createRecordsTable()
     {
         $query = 'CREATE TABLE IF NOT EXISTS records (
             id INTEGER PRIMARY KEY,
@@ -46,14 +46,32 @@ class SQLiteDatabaseConnection
             call_date DATETIME NOT NULL,
             call_duration INTEGER NOT NULL,
             number_called varchar(12) NOT NULL,
-            customer_ip varchar(15) NOT NULL,
-            is_continental boolean DEFAULT TRUE
+            customer_ip varchar(15) NOT NULL
         );';
 
-        $result = $conn->prepare($query);
-        if(!$result->execute())
+        $result = $this->conn->prepare($query);
+        if (!$result->execute())
             throw new PDOException('Table `records` not created.');
     }
+
+    /**
+     * Create a new table for records.
+     */
+    public function createGeonamesTable()
+    {
+        $query = 'CREATE TABLE IF NOT EXISTS geonames (
+            id INTEGER PRIMARY KEY,
+            geoname_id INTEGER NULL,
+            country_iso varchar(2) NOT NULL,
+            continent varchar(2) NOT NULL,
+            phone_code varchar(8) NULL
+        );';
+
+        $result = $this->conn->prepare($query);
+        if (!$result->execute())
+            throw new PDOException('Table `geonames` not created.');
+    }
+
     /**
      * Create a new table using csv data. If no table name is given the file name is used to create table.
      * Options available: delimiter, table, fields.
@@ -113,5 +131,23 @@ class SQLiteDatabaseConnection
             'inserted_rows' => $inserted_rows
         );
 
+    }
+
+    public function checkIfTableExists($table_name)
+    {
+        $query = 'SELECT name FROM sqlite_master WHERE type=\'table\' AND name=\'' . $table_name . '\';';
+
+        $result = $this->conn->prepare($query);
+        $result->execute();
+
+        if ($result->rowCount() == 0)
+            switch ($table_name) {
+                case 'geonames':
+                    $this->createGeonamesTable();
+                    break;
+                case 'records':
+                    $this->createRecordsTable();
+                    break;
+            }
     }
 }
