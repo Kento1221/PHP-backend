@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'ae495c9a4bb9a3d41f64f0251271ba5a6f85adba',
+    'reference' => '60d7cd861d9a3c61fcea81d62d1befb77ebbd943',
     'name' => 'kento1221/php-backend',
   ),
   'versions' => 
@@ -42,7 +42,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'ae495c9a4bb9a3d41f64f0251271ba5a6f85adba',
+      'reference' => '60d7cd861d9a3c61fcea81d62d1befb77ebbd943',
     ),
   ),
 );

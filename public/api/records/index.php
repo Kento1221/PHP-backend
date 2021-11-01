@@ -5,7 +5,9 @@ use App\Models\SQLiteDatabaseConnection;
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET');
-header('Access-Control-Allow-Headers: application/json');
+header('Access-Control-Allow-Headers: Content-Type');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers:*");
 
 include_once '../../../app/models/SQLiteDatabaseConnection.php';
 include_once '../../../app/models/Record.php';

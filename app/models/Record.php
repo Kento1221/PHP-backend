@@ -43,6 +43,19 @@ class Record
         return $result->fetchAll(PDO::FETCH_CLASS);
     }
 
+    /**
+     * Get array of all distinct Customer IDs
+     * @param PDO $connection
+     * @return array
+     */
+    public static function getAllCustomerIds($connection):array
+    {
+        $query = "SELECT DISTINCT customer_id FROM " . Record::TABLE_NAME . " ORDER BY customer_id ASC;";
+        $result = $connection->prepare($query);
+        $result->execute();
+        return $result->fetchAll(PDO::FETCH_COLUMN);
+    }
+
     /** Creates a new record in the `records` table
      * @param PDO $connection
      * @return bool
@@ -121,7 +134,7 @@ class Record
         return $result->fetchAll(PDO::FETCH_CLASS);
     }
 
-    /** Returns a record by provided id
+    /** Deletes a record with provided id from the table records
      * @param PDO $connection
      * @param int $id
      * @return bool

@@ -37,9 +37,14 @@ class SQLiteDatabaseConnection
 
     /**
      * Create a new `records` table in the database.
+     * @throws PDOException
+     * @throws Exception
      */
     public function createRecordsTable(): void
     {
+        if ($this->conn == null)
+            throw new Exception("Open connection before using `truncateTable`");
+
         $query = 'CREATE TABLE IF NOT EXISTS records (
             id INTEGER PRIMARY KEY,
             customer_id INTEGER NOT NULL,
@@ -56,9 +61,14 @@ class SQLiteDatabaseConnection
 
     /**
      * Create a new `geonames` table in the database.
+     * @throws PDOException
+     * @throws Exception
      */
     public function createGeonamesTable(): void
     {
+        if ($this->conn == null)
+            throw new Exception("Open connection before using `truncateTable`");
+
         $query = 'CREATE TABLE IF NOT EXISTS geonames (
             id INTEGER PRIMARY KEY,
             geoname_id INTEGER NULL,
@@ -92,5 +102,22 @@ class SQLiteDatabaseConnection
                     $this->createRecordsTable();
                     break;
             }
+    }
+
+    /**
+     * Clear table of data
+     * @param string $table_name
+     * @return bool
+     * @throws Exception
+     */
+    public function truncateTable(string $table_name): bool
+    {
+        if ($this->conn == null)
+            throw new Exception("Open connection before using `truncateTable`");
+
+        $query = "DELETE FROM " . $table_name . " WHERE 1;";
+        $result = $this->conn->prepare($query);
+
+        return $result->execute();
     }
 }

@@ -28,6 +28,12 @@ class RecordService
             echo json_encode($missingVariables);
             return false;
         }
+
+        if(!intval($post_array['customer_id'])) {
+            header($_SERVER["SERVER_PROTOCOL"] . " 422 Unprocessable Entity");
+            echo json_encode(['message' => 'Parameter type error: customer id should be an integer']);
+            return false;
+        }
         return true;
     }
 

@@ -7,13 +7,13 @@ use App\Services\RecordService;
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: GET');
-header('Access-Control-Allow-Headers: application/json');
+header('Access-Control-Allow-Headers: Content-Type');
 
-include_once '../../../app/models/SQLiteDatabaseConnection.php';
-include_once '../../../app/models/Record.php';
-include_once '../../../app/services/RecordService.php';
-include_once '../../../app/models/Geoname.php';
-include_once '../../../config.php';
+include_once '../../../../app/models/SQLiteDatabaseConnection.php';
+include_once '../../../../app/models/Record.php';
+include_once '../../../../app/services/RecordService.php';
+include_once '../../../../app/models/Geoname.php';
+include_once '../../../../config.php';
 
 if (!RecordService::validateRecordIdInput($_GET)) {
     return;

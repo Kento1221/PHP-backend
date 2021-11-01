@@ -24,12 +24,17 @@ class CustomerService
             echo json_encode(['message' => 'Missing Parameter: id(int)']);
             return false;
         }
-
+        $id = intval($post_array['id']);
+        if(!$id){
+            header($_SERVER["SERVER_PROTOCOL"] . ' 422 Unprocessable Entity');
+            echo json_encode(['message' => 'Parameter type error: id needs to be an integer']);
+            return false;
+        }
         $db = new SQLiteDatabaseConnection();
         $conn = $db->connect();
 
         $result = $conn->prepare('SELECT count(1) FROM ' . Record::TABLE_NAME . ' WHERE customer_id = :id;');
-        $result->bindParam(':id', $post_array['id'], PDO::PARAM_INT);
+        $result->bindParam(':id', $id, PDO::PARAM_INT);
         $result->execute();
         $rows = $result->fetchAll(PDO::FETCH_COLUMN);
         $db->close();
